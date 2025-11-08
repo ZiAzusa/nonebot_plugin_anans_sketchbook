@@ -8,7 +8,7 @@ import win32clipboard
 import win32gui
 import win32process
 import psutil
-from typing import Optional
+from typing import Optional, Tuple
 from config import DELAY, FONT_FILE, BASEIMAGE_FILE, AUTO_SEND_IMAGE, AUTO_PASTE_IMAGE, BLOCK_HOTKEY, HOTKEY, SEND_HOTKEY,PASTE_HOTKEY,CUT_HOTKEY,SELECT_ALL_HOTKEY,TEXT_BOX_TOPLEFT,IMAGE_BOX_BOTTOMRIGHT,BASE_OVERLAY_FILE,USE_BASE_OVERLAY, ALLOWED_PROCESSES
 
 from text_fit_draw import draw_text_auto
@@ -42,9 +42,9 @@ def copy_png_bytes_to_clipboard(png_bytes: bytes):
     win32clipboard.CloseClipboard()
 
 
-def cut_all_and_get_text() -> str:
+def cut_all_and_get_text() -> Tuple[str, object]:
     """
-    模拟 Ctrl+A / Ctrl+X 剪切全部文本，并返回剪切得到的内容。
+    模拟 Ctrl+A / Ctrl+X 剪切全部文本，并返回剪切得到的内容和原始剪贴板内容。
     delay: 每步之间的延时（秒），默认0.1秒。
     """
     # 备份原剪贴板
@@ -61,7 +61,7 @@ def cut_all_and_get_text() -> str:
     # 获取剪切后的内容
     new_clip = pyperclip.paste()
 
-    return new_clip
+    return new_clip, old_clip
 
 def try_get_image() -> Optional[Image.Image]:
     """
@@ -102,7 +102,7 @@ def Start():
 
     print("Start generate...")
 
-    text=cut_all_and_get_text()
+    text, old_clipboard_content=cut_all_and_get_text()
     image=try_get_image()
 
     if text == "" and image is None:
@@ -163,6 +163,8 @@ def Start():
         if AUTO_SEND_IMAGE:
             keyboard.send(SEND_HOTKEY)
 
+    # 恢复原始剪贴板内容
+    pyperclip.copy(old_clipboard_content)
     
     print("Generate image successed!")
 
