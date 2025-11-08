@@ -31,3 +31,7 @@
 输入`#普通#`, `#开心#`, `#生气#`, `#无语#`, `#脸红#`, `#病娇#`可以切换标签差分, 一次切换一直有效. 可以通过修改`BASEIMAGE_MAPPING`来增加更多查分
 
 如果发送失败等可以尝试适当增大`main.py`第10行的`DELAY`
+
+## 其他分支
+
+- [支援MacOS的分支](https://github.com/Sheyiyuan/Anan-s-Sketchbook-Chat-Box/)
