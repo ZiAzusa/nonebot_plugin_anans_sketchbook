@@ -1,25 +1,147 @@
 # filename: text_fit_draw.py
-from io import BytesIO
-from typing import Tuple, Union, Literal , Optional ,List
-from PIL import Image, ImageDraw, ImageFont
 import os
+from io import BytesIO
+from typing import List, Literal, Optional, Tuple, TypeAlias, Union
+
+from PIL import Image, ImageDraw, ImageFont
+
+RGBColor: TypeAlias = Tuple[int, int, int]
 
 Align = Literal["left", "center", "right"]
 VAlign = Literal["top", "middle", "bottom"]
+
+
+def _load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
+    """
+    加载指定路径的字体文件，如果失败则加载默认字体。
+    """
+    if font_path and os.path.exists(font_path):
+        return ImageFont.truetype(font_path, size=size)
+    try:
+        return ImageFont.truetype("DejaVuSans.ttf", size=size)
+    except Exception:
+        return ImageFont.load_default()  # type: ignore # 如果没有可用的 TTF 字体，则加载默认位图字体
+
+
+def wrap_lines(
+    draw: ImageDraw.ImageDraw, txt: str, font: ImageFont.FreeTypeFont, max_w: int
+) -> List[str]:
+    """
+    将文本按指定宽度拆分为多行。
+    """
+    lines: list[str] = []
+
+    for para in txt.splitlines() or [""]:
+        has_space = " " in para
+        units = para.split(" ") if has_space else list(para)
+        buf = ""
+
+        def unit_join(a: str, b: str) -> str:
+            if not a:
+                return b
+            return (a + " " + b) if has_space else (a + b)
+
+        for u in units:
+            trial = unit_join(buf, u)
+            w = draw.textlength(trial, font=font)
+
+            # 如果加入当前单元后宽度未超限，则继续累积
+            if w <= max_w:
+                buf = trial
+                continue
+
+            # 否则先将缓冲区内容作为一行输出
+            if buf:
+                lines.append(buf)
+
+            # 处理当前单元
+            if has_space and len(u) > 1:
+                tmp = ""
+                for ch in u:
+                    if draw.textlength(tmp + ch, font=font) <= max_w:
+                        tmp += ch
+                        continue
+
+                    if tmp:
+                        lines.append(tmp)
+                    tmp = ch
+                buf = tmp
+                continue
+
+            if draw.textlength(u, font=font) <= max_w:
+                buf = u
+            else:
+                lines.append(u)
+                buf = ""
+        if buf != "":
+            lines.append(buf)
+        if para == "" and (not lines or lines[-1] != ""):
+            lines.append("")
+    return lines
+
+
+def parse_color_segments(
+    s: str, in_bracket: bool, bracket_color: RGBColor, color: RGBColor
+) -> Tuple[List[Tuple[str, RGBColor]], bool]:
+    """
+    解析字符串为带颜色信息的片段列表。
+    中括号及其内部内容使用 bracket_color。
+    """
+    segs: list[tuple[str, RGBColor]] = []
+    buf = ""
+    for ch in s:
+        if ch == "[" or ch == "【":
+            if buf:
+                segs.append((buf, bracket_color if in_bracket else color))
+                buf = ""
+            segs.append((ch, bracket_color))
+            in_bracket = True
+        elif ch == "]" or ch == "】":
+            if buf:
+                segs.append((buf, bracket_color))
+                buf = ""
+            segs.append((ch, bracket_color))
+            in_bracket = False
+        else:
+            buf += ch
+    if buf:
+        segs.append((buf, bracket_color if in_bracket else color))
+    return segs, in_bracket
+
+
+def measure_block(
+    draw: ImageDraw.ImageDraw,
+    lines: List[str],
+    font: ImageFont.FreeTypeFont,
+    line_spacing: float,
+) -> Tuple[int, int, int]:
+    """
+    测量文本块的宽度、高度和行高。
+
+    :return: (最大宽度, 总高度, 行高)
+    """
+    ascent, descent = font.getmetrics()
+    line_h = int((ascent + descent) * (1 + line_spacing))
+    max_w = 0
+    for ln in lines:
+        max_w = max(max_w, int(draw.textlength(ln, font=font)))
+    total_h = max(line_h * max(1, len(lines)), 1)
+    return max_w, total_h, line_h
+
 
 def draw_text_auto(
     image_source: Union[str, Image.Image],
     top_left: Tuple[int, int],
     bottom_right: Tuple[int, int],
     text: str,
-    color: Tuple[int, int, int] = (0, 0, 0),
+    color: RGBColor = (0, 0, 0),
     max_font_height: Optional[int] = None,
     font_path: Optional[str] = None,
     align: Align = "center",
     valign: VAlign = "middle",
     line_spacing: float = 0.15,
-    bracket_color: Tuple[int, int, int] = (128, 0, 128),  # 中括号及内部内容颜色
-    image_overlay: Union[str, Image.Image, None]=None,
+    bracket_color: RGBColor = (128, 0, 128),  # 中括号及内部内容颜色
+    image_overlay: Union[str, Image.Image, None] = None,
 ) -> bytes:
     """
     在指定矩形内自适应字号绘制文本；
@@ -37,7 +159,13 @@ def draw_text_auto(
         if isinstance(image_overlay, Image.Image):
             img_overlay = image_overlay.copy()
         else:
-            img_overlay = Image.open(image_overlay).convert("RGBA") if os.path.isfile(image_overlay) else None
+            img_overlay = (
+                Image.open(image_overlay).convert("RGBA")
+                if os.path.isfile(image_overlay)
+                else None
+            )
+    else:
+        img_overlay = None
 
     x1, y1 = top_left
     x2, y2 = bottom_right
@@ -45,77 +173,15 @@ def draw_text_auto(
         raise ValueError("无效的文字区域。")
     region_w, region_h = x2 - x1, y2 - y1
 
-    # --- 2. 字体加载 ---
-    def _load_font(size: int) -> ImageFont.FreeTypeFont:
-        if font_path and os.path.exists(font_path):
-            return ImageFont.truetype(font_path, size=size)
-        try:
-            return ImageFont.truetype("DejaVuSans.ttf", size=size)
-        except Exception:
-            return ImageFont.load_default()
-
-    # --- 3. 文本包行 ---
-    def wrap_lines(txt: str, font: ImageFont.FreeTypeFont, max_w: int) -> List[str]:
-        lines: list[str] = []
-        for para in txt.splitlines() or [""]:
-            has_space = (" " in para)
-            units = para.split(" ") if has_space else list(para)
-            buf = ""
-
-            def unit_join(a: str, b: str) -> str:
-                if not a:
-                    return b
-                return (a + " " + b) if has_space else (a + b)
-
-            for u in units:
-                trial = unit_join(buf, u)
-                w = draw.textlength(trial, font=font)
-                if w <= max_w:
-                    buf = trial
-                else:
-                    if buf:
-                        lines.append(buf)
-                    if has_space and len(u) > 1:
-                        tmp = ""
-                        for ch in u:
-                            if draw.textlength(tmp + ch, font=font) <= max_w:
-                                tmp += ch
-                            else:
-                                if tmp:
-                                    lines.append(tmp)
-                                tmp = ch
-                        buf = tmp
-                    else:
-                        if draw.textlength(u, font=font) <= max_w:
-                            buf = u
-                        else:
-                            lines.append(u)
-                            buf = ""
-            if buf != "":
-                lines.append(buf)
-            if para == "" and (not lines or lines[-1] != ""):
-                lines.append("")
-        return lines
-
-    # --- 4. 测量 ---
-    def measure_block(lines: List[str], font: ImageFont.FreeTypeFont) -> Tuple[int, int, int]:
-        ascent, descent = font.getmetrics()
-        line_h = int((ascent + descent) * (1 + line_spacing))
-        max_w = 0
-        for ln in lines:
-            max_w = max(max_w, int(draw.textlength(ln, font=font)))
-        total_h = max(line_h * max(1, len(lines)), 1)
-        return max_w, total_h, line_h
-
-    # --- 5. 搜索最大字号 ---
+    # --- 2. 搜索最大字号 ---
     hi = min(region_h, max_font_height) if max_font_height else region_h
     lo, best_size, best_lines, best_line_h, best_block_h = 1, 0, [], 0, 0
 
     while lo <= hi:
         mid = (lo + hi) // 2
-        font = _load_font(mid)
-        lines = wrap_lines(text, font, region_w)
-        w, h, lh = measure_block(lines, font)
+        font = _load_font(font_path, mid)
+        lines = wrap_lines(draw, text, font, region_w)
+        w, h, lh = measure_block(draw, lines, font, line_spacing)
         if w <= region_w and h <= region_h:
             best_size, best_lines, best_line_h, best_block_h = mid, lines, lh, h
             lo = mid + 1
@@ -123,37 +189,14 @@ def draw_text_auto(
             hi = mid - 1
 
     if best_size == 0:
-        font = _load_font(1)
-        best_lines = wrap_lines(text, font, region_w)
-        _, best_block_h, best_line_h = 0, 1, 1
+        font = _load_font(font_path, 1)
+        best_lines = wrap_lines(draw, text, font, region_w)
+        best_block_h, best_line_h = 1, 1
         best_size = 1
     else:
-        font = _load_font(best_size)
+        font = _load_font(font_path, best_size)
 
-    # --- 6. 解析着色片段 ---
-    def parse_color_segments(s: str,in_bracket: bool) -> Tuple[List[Tuple[str, Tuple[int, int, int]]],bool]:
-        segs: list[tuple[str, Tuple[int, int, int]]] = []
-        buf = ""
-        for ch in s:
-            if ch == "[" or ch == "【":
-                if buf:
-                    segs.append((buf, bracket_color if in_bracket else color))
-                    buf = ""
-                segs.append((ch, bracket_color))
-                in_bracket = True
-            elif ch == "]" or ch == "】":
-                if buf:
-                    segs.append((buf, bracket_color))
-                    buf = ""
-                segs.append((ch, bracket_color))
-                in_bracket = False
-            else:
-                buf += ch
-        if buf:
-            segs.append((buf, bracket_color if in_bracket else color))
-        return segs,in_bracket
-
-    # --- 7. 垂直对齐 ---
+    # --- 3. 垂直对齐 ---
     if valign == "top":
         y_start = y1
     elif valign == "middle":
@@ -161,7 +204,7 @@ def draw_text_auto(
     else:
         y_start = y2 - best_block_h
 
-    # --- 8. 绘制 ---
+    # --- 4. 绘制 ---
     y = y_start
     in_bracket = False
     for ln in best_lines:
@@ -172,7 +215,9 @@ def draw_text_auto(
             x = x1 + (region_w - line_w) // 2
         else:
             x = x2 - line_w
-        segments,in_bracket = parse_color_segments(ln,in_bracket)
+        segments, in_bracket = parse_color_segments(
+            ln, in_bracket, bracket_color, color
+        )
         for seg_text, seg_color in segments:
             if seg_text:
                 draw.text((x, y), seg_text, font=font, fill=seg_color)
@@ -187,7 +232,7 @@ def draw_text_auto(
     elif image_overlay is not None and img_overlay is None:
         print("Warning: overlay image is not exist.")
 
-    # --- 9. 输出 PNG ---
+    # --- 5. 输出 PNG ---
     buf = BytesIO()
     img.save(buf, format="PNG")
     return buf.getvalue()

@@ -1,11 +1,13 @@
 # filename: image_fit_paste.py
-from io import BytesIO
-from typing import Tuple, Literal, Union
-from PIL import Image
 import os
+from io import BytesIO
+from typing import Literal, Tuple, Union
+
+from PIL import Image
 
 Align = Literal["left", "center", "right"]
 VAlign = Literal["top", "middle", "bottom"]
+
 
 def paste_image_auto(
     image_source: Union[str, Image.Image],
@@ -17,17 +19,21 @@ def paste_image_auto(
     padding: int = 0,
     allow_upscale: bool = False,
     keep_alpha: bool = True,
-    image_overlay: Union[str, Image.Image,None]=None,
+    image_overlay: Union[str, Image.Image, None] = None,
 ) -> bytes:
     """
     在指定矩形内放置一张图片（content_image），按比例缩放至“最大但不超过”该矩形。
-    - base_image: 底图（会被复制，原图不改）
-    - top_left / bottom_right: 指定矩形区域（左上/右下坐标）
-    - content_image: 待放入的图片（PIL.Image.Image）
-    - align / valign: 水平/垂直对齐方式
-    - padding: 矩形内边距（像素），四边统一
-    - allow_upscale: 是否允许放大（默认只缩小不放大）
-    - keep_alpha: True 时保留透明通道并用其作为粘贴蒙版
+
+    : param base_image: 底图（会被复制，原图不改）
+    : param top_left: 指定矩形区域（左上坐标）
+    : param bottom_right: 指定矩形区域（右下坐标）
+    : param content_image: 待放入的图片（PIL.Image.Image）
+    : param align: 水平对齐方式
+    : param valign: 垂直对齐方式
+    : param padding: 矩形内边距（像素），四边统一
+    : param allow_upscale: 是否允许放大（默认只缩小不放大）
+    : param keep_alpha: True 时保留透明通道并用其作为粘贴蒙版
+    : param image_overlay: 可选的置顶覆盖图（会被复制，原图不改）
 
     返回：最终 PNG 的 bytes。
     """
@@ -43,7 +49,13 @@ def paste_image_auto(
         if isinstance(image_overlay, Image.Image):
             img_overlay = image_overlay.copy()
         else:
-            img_overlay = Image.open(image_overlay).convert("RGBA") if os.path.isfile(image_overlay) else None
+            img_overlay = (
+                Image.open(image_overlay).convert("RGBA")
+                if os.path.isfile(image_overlay)
+                else None
+            )
+    else:
+        img_overlay = None
 
     x1, y1 = top_left
     x2, y2 = bottom_right
@@ -71,7 +83,7 @@ def paste_image_auto(
     new_h = max(1, int(round(ch * scale)))
 
     # 选择高质量插值
-    resized = content_image.resize((new_w, new_h), Image.LANCZOS)
+    resized = content_image.resize((new_w, new_h), Image.Resampling.LANCZOS)
 
     # 计算粘贴坐标（考虑对齐与 padding）
     if align == "left":
