@@ -144,6 +144,9 @@ def generate_image():
     # `cut_all_and_get_text` 会清空剪切板，所以 `try_get_image` 要在前面调用
     user_pasted_image = try_get_image()
     user_input, old_clipboard_content = cut_all_and_get_text()
+    logging.debug(f"用户粘贴图片: {user_pasted_image is not None}")
+    logging.debug(f"用户输入的文本内容: {user_input}")
+    logging.debug(f"历史剪贴板内容: {old_clipboard_content}")
 
     if user_input == "" and user_pasted_image is None:
         logging.info("未检测到文本或图片输入，取消生成")
