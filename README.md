@@ -1,10 +1,28 @@
-# 安安的素描本聊天框
+# 安安的素描本聊天框的NoneBot插件
 
-本项目是一个将你在一个文本输入框中的文字或图片写到安安的素描本上的项目
+**未完成，暂不可用**
+
+本分支是 MarkCup-Official/Anan-s-Sketchbook-Chat-Box 的Nonebot插件。
 
 ## AI声明
 
 本项目90%的代码由AI生成
+
+## 使用示例
+
+- 文本生成：向机器人发送消息或命令 `/anan 你好`，机器人会返回生成的图片。
+- 图片粘贴：直接发送图片，机器人会将该图片粘贴到底图指定的位置并返回结果。
+
+安装依赖后，将本仓库所在路径加入 Python 路径（或将插件包安装到 environment），并在 nonebot 配置中加载 `nonebot-plugin-anan-s-sketchbook`。
+
+安装依赖：
+```bash
+pip install -r requirements.txt
+```
+
+<hr>
+
+**以下是原项目README**
 
 ## 部署
 
@@ -31,3 +49,4 @@
 输入`#普通#`, `#开心#`, `#生气#`, `#无语#`, `#脸红#`, `#病娇#`可以切换标签差分, 一次切换一直有效. 可以通过修改`BASEIMAGE_MAPPING`来增加更多查分
 
 如果发送失败等可以尝试适当增大`main.py`第10行的`DELAY`
+

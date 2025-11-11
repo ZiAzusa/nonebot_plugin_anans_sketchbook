@@ -1,6 +1,5 @@
 Pillow>=12.0.0
-keyboard>=0.13.5
-pyperclip>=1.11.0
-pywin32>=311
-psutil
 pydantic
+nonebot2
+nonebot-adapter-onebot
+httpx>=0.23.0
