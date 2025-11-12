@@ -1,5 +1,5 @@
 # 字体文件路径
-font_file: sources/font.ttf
+font_file: sources/allseto.ttf
 
 # 底图映射表，可自定义表情底图
 baseimage_mapping:
