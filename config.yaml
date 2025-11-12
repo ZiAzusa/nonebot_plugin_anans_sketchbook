@@ -1,0 +1,28 @@
+# 字体文件路径
+font_file: font.ttf
+
+# 底图映射表，可自定义表情底图
+baseimage_mapping:
+  "普通": "BaseImages/base.png"
+  "开心": "BaseImages/开心.png"
+  "生气": "BaseImages/生气.png"
+  "无语": "BaseImages/无语.png"
+  "脸红": "BaseImages/脸红.png"
+  "病娇": "BaseImages/病娇.png"
+
+# 默认底图文件路径
+baseimage_file: BaseImages/base.png
+
+# 文本框坐标（左上角、右下角）
+text_box_topleft: [119, 450]
+image_box_bottomright: [398, 625]
+
+# 置顶图层设置
+base_overlay_file: BaseImages/base_overlay.png
+use_base_overlay: true
+
+# 生成图像的延迟时间（秒）
+delay: 0.1
+
+# 日志等级
+logging_level: INFO
