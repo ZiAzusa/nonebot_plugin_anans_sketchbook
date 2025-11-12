@@ -2,6 +2,6 @@ Pillow>=9.0.0,<12.0.0
 pydantic>=1.10.2,<2.0.0
 PyYAML>=5.0.0,<7.0.0
 nonebot2>=2.0.0,<3.0.0
-nonebot-adapter-onebot>=2.0.0,<3.0.0
+nonebot-adapter-onebot>=2.0.0rc1,<3.0.0
 httpx>=0.23.0,<1.0.0
 typing-extensions>=4.0.0,<5.0.0

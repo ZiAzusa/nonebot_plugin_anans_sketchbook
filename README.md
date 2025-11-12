@@ -14,7 +14,7 @@
 cd 插件目录
 git clone https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook.git
 cd nonebot_plugin_anans_sketchbook
-pip install -r requirements.txt
+pip install -r requirements.txt --pre --no-uninstall # 避免破坏现有依赖
 ```
 
 或者，将本项目所在路径直接引入到Nonebot的bot.py
