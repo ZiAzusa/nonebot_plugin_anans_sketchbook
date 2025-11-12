@@ -2,6 +2,8 @@
 
 本分支是 [MarkCup-Official/Anan-s-Sketchbook-Chat-Box](https://github.com/MarkCup-Official/Anan-s-Sketchbook-Chat-Box) 的Nonebot插件。
 
+**需要注意的是：此插件基于Python3.10,Nonebot2==2.0.0的环境下开发，对于最新版本可能存在兼容性问题，如遇这类问题请提issue**
+
 ## AI声明
 
 本项目90%的代码由AI生成
