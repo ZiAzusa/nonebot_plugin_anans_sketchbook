@@ -77,29 +77,14 @@ async def _(arg: Message = CommandArg()):
             await handle_image(image_url, base_image_path)
             return
 
-        # 返回使用说明
-        if not processed_args:
-            usage_image = draw_text_auto(
-                image_source=base_image_path,
-                top_left=config.text_box_topleft,
-                bottom_right=config.image_box_bottomright,
-                text=usage,
-                color=(0, 0, 0),
-                max_font_height=64,
-                font_path=fix_path(config.font_file),
-                image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
-            )
-            b64 = base64.b64encode(usage_image).decode()
-            await anan.finish(MessageSegment.image(f"base64://{b64}"))
-
-        # 写入文字并发送
-        text = " ".join(processed_args)
+        # 写入文本并发送
         text_image = draw_text_auto(
             image_source=base_image_path,
             top_left=config.text_box_topleft,
             bottom_right=config.image_box_bottomright,
-            text=text,
+            text=" ".join(processed_args) if processed_args else usage, # 默认显示使用方法
             color=(0, 0, 0),
+            bracket_color=(106, 90, 205),
             max_font_height=64,
             font_path=fix_path(config.font_file),
             image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,

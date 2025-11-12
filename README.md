@@ -41,6 +41,8 @@ pip install -r requirements.txt
 夏目安安 开心 [图片]
 ```
 
+![使用例](https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook/blob/main/sources/example.jpg?raw=true)
+
 <hr>
 
 **以下是原项目README**
