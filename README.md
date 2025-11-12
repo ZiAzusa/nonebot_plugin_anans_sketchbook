@@ -19,6 +19,8 @@ pip install -r requirements.txt
 
 或者，将本项目所在路径直接引入到Nonebot的bot.py
 
+如需添加表情/修改字体，可以直接修改config.yaml
+
 ## 使用
 
 ```
