@@ -1,6 +1,6 @@
 # 安安的素描本聊天框的NoneBot插件
 
-本分支是 MarkCup-Official/Anan-s-Sketchbook-Chat-Box 的Nonebot插件。
+本分支是 [MarkCup-Official/Anan-s-Sketchbook-Chat-Box](https://github.com/MarkCup-Official/Anan-s-Sketchbook-Chat-Box) 的Nonebot插件。
 
 ## AI声明
 
@@ -14,7 +14,7 @@
 cd 插件目录
 git clone https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook.git
 cd nonebot_plugin_anans_sketchbook
-pip install -r requirements.txt --pre --no-uninstall # 避免破坏现有依赖
+pip install -r requirements.txt
 ```
 
 或者，将本项目所在路径直接引入到Nonebot的bot.py
