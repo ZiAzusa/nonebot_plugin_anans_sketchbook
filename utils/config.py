@@ -29,8 +29,8 @@ class Config(BaseModel):
     logging_level: str = Field("INFO", description="日志记录等级")
 
     @classmethod
-    def load(cls, path: Union[str, Path] = "config.yaml") -> "Config":
-        path = Path(path)
+    def load(cls, path: Union[str, Path] = str(Path(__file__).parent.parent)+"/"+"config.yaml") -> "Config":
+        path = Path(str(Path(__file__).parent.parent)+"/"+path)
         if not path.exists():
             print(f"[Config] 未找到 {path}，正在创建默认配置...")
             default_cfg = cls()

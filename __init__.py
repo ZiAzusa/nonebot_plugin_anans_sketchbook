@@ -16,7 +16,7 @@ from nonebot.exception import FinishedException
 
 from .utils.image_fit_paste import paste_image_auto
 from .utils.text_fit_draw import draw_text_auto
-from .config import Config
+from .utils.config import Config
 
 config = Config.load()
 logger = logging.getLogger(__name__)
