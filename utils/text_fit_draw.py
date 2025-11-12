@@ -1,7 +1,14 @@
 # filename: text_fit_draw.py
 import os
 from io import BytesIO
-from typing import List, Literal, Optional, Tuple, TypeAlias, Union
+
+# 兼容 Python 3.8~3.11
+try:
+    from typing import TypeAlias, Literal
+except ImportError:
+    from typing_extensions import TypeAlias, Literal
+
+from typing import List, Optional, Tuple, Union
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -9,7 +16,6 @@ RGBColor: TypeAlias = Tuple[int, int, int]
 
 Align = Literal["left", "center", "right"]
 VAlign = Literal["top", "middle", "bottom"]
-
 
 def _load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
     """
@@ -21,7 +27,6 @@ def _load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
         return ImageFont.truetype("DejaVuSans.ttf", size=size)
     except Exception:
         return ImageFont.load_default()  # type: ignore # 如果没有可用的 TTF 字体，则加载默认位图字体
-
 
 def wrap_lines(
     draw: ImageDraw.ImageDraw, txt: str, font: ImageFont.FreeTypeFont, max_w: int
@@ -79,7 +84,6 @@ def wrap_lines(
             lines.append("")
     return lines
 
-
 def parse_color_segments(
     s: str, in_bracket: bool, bracket_color: RGBColor, color: RGBColor
 ) -> Tuple[List[Tuple[str, RGBColor]], bool]:
@@ -108,7 +112,6 @@ def parse_color_segments(
         segs.append((buf, bracket_color if in_bracket else color))
     return segs, in_bracket
 
-
 def measure_block(
     draw: ImageDraw.ImageDraw,
     lines: List[str],
@@ -127,7 +130,6 @@ def measure_block(
         max_w = max(max_w, int(draw.textlength(ln, font=font)))
     total_h = max(line_h * max(1, len(lines)), 1)
     return max_w, total_h, line_h
-
 
 def draw_text_auto(
     image_source: Union[str, Image.Image],

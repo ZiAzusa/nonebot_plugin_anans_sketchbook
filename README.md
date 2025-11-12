@@ -1,28 +1,46 @@
 # 安安的素描本聊天框的NoneBot插件
 
-**未完成，暂不可用**
-
 本分支是 MarkCup-Official/Anan-s-Sketchbook-Chat-Box 的Nonebot插件。
 
 ## AI声明
 
 本项目90%的代码由AI生成
 
-## 使用示例
+## 部署
 
-- 文本生成：向机器人发送消息或命令 `/anan 你好`，机器人会返回生成的图片。
-- 图片粘贴：直接发送图片，机器人会将该图片粘贴到底图指定的位置并返回结果。
+将本项目clone到Nonebot的插件目录并安装依赖：
 
-安装依赖后，将本仓库所在路径加入 Python 路径（或将插件包安装到 environment），并在 nonebot 配置中加载 `nonebot-plugin-anan-s-sketchbook`。
-
-安装依赖：
-```bash
+```
+cd 插件目录
+git clone https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook.git
+cd nonebot_plugin_anans_sketchbook
 pip install -r requirements.txt
 ```
+
+或者，将本项目所在路径直接引入到Nonebot的bot.py
+
+## 使用
+
+命令：anan 或 夏目安安
+功能：生成夏目安安的素描本聊天框
+支持的差分表情：{', '.join(config.baseimage_mapping.keys())}
+
+用法：
+夏目安安 ?[可选差分] 文本/图片（优先图片）
+
+示例：
+夏目安安 这是吾辈在说话
+夏目安安 开心 吾辈开心
+夏目安安 [图片]
+夏目安安 开心 [图片]
 
 <hr>
 
 **以下是原项目README**
+
+## AI声明
+
+本项目90%的代码由AI生成
 
 ## 部署
 

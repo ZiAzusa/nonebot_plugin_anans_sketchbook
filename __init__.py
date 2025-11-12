@@ -3,143 +3,147 @@ from __future__ import annotations
 import base64
 import io
 import logging
-from typing import Optional, List
-
-from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment, Message
-from nonebot.params import CommandArg
+from typing import Optional, List, Tuple
+from pathlib import Path
 
 from PIL import Image
 import httpx
 
-from .image_fit_paste import paste_image_auto
-from .text_fit_draw import draw_text_auto
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment, Message
+from nonebot.params import CommandArg
+from nonebot.exception import FinishedException
+
+from .utils.image_fit_paste import paste_image_auto
+from .utils.text_fit_draw import draw_text_auto
 from .config import Config
 
 config = Config.load()
-
 logger = logging.getLogger(__name__)
+PLUGIN_DIR = str(Path(__file__).parent) + "/"
 
+usage = f"""\
+命令：anan 或 夏目安安
+功能：生成夏目安安的素描本聊天框
+支持的差分表情：{', '.join(config.baseimage_mapping.keys())}
 
-# 命令触发器：支持 /anan 与 夏目安安
+用法：
+夏目安安 ?[可选差分] 文本/图片（优先图片）
+
+示例：
+夏目安安 这是吾辈在说话
+夏目安安 开心 吾辈开心
+夏目安安 [图片]
+夏目安安 开心 [图片]
+"""
+
+# 命令触发器
 anan = on_command("anan", aliases={"夏目安安"}, priority=5)
 
+# 切到插件目录
+def fix_path(filename: str) -> str:
+    return PLUGIN_DIR + filename
+
+# 根据参数列表获取处理后的参数列表和底图路径
+def get_diff_info(args: List[str]) -> Tuple[Optional[str], List[str], str]:
+    if not args:
+        # 无参数时使用默认底图
+        default_image = config.baseimage_mapping.get(None, config.baseimage_file)
+        return args, fix_path(default_image)
+    
+    diff_keys = config.baseimage_mapping.keys()
+    if args[0] in diff_keys:
+        # 匹配到差分，返回对应底图
+        diff_image = config.baseimage_mapping[args[0]]
+        return args[1:], fix_path(diff_image)
+    else:
+        # 未匹配到差分，使用默认底图
+        default_image = config.baseimage_mapping.get(None, config.baseimage_file)
+        return args, fix_path(default_image)
 
 @anan.handle()
-async def _(bot: Bot, event: Event, arg: Message = CommandArg()):
-    """
-    命令用法：
-    - 夏目安安 文本：生成文字图
-    - 夏目安安 开心 文本：切换到“开心”差分底图后生成文字图
-    - 夏目安安 开心 [CQ:image...]：切换差分底图后合成图片
-    """
+async def _(arg: Message = CommandArg()):
     try:
-        # 提取消息段
-        segments = arg
+        # 解析消息：分离文本参数和图片URL
         text_args: List[str] = []
         image_url: Optional[str] = None
-
-        for seg in segments:
+        for seg in arg:
             if seg.type == "text":
-                # 分词并清除多余空格
-                text_args.extend(seg.data.get("text", "").strip().split())
-            elif seg.type == "image":
-                data = getattr(seg, "data", {})
-                if not isinstance(data, dict):
-                    data = {}
+                text = seg.data.get("text", "").strip()
+                if text:
+                    text_args.extend(text.split())
+            elif seg.type == "image" and not image_url:  # 只取第一张图片
+                data = getattr(seg, "data", {}) or {}
                 image_url = data.get("url") or data.get("file") or data.get("image")
+ 
+        processed_args, base_image_path = get_diff_info(text_args)
 
-        # 优先处理图片
         if image_url:
-            await handle_image(bot, event, image_url, text_args)
+            await handle_image(image_url, base_image_path)
             return
 
-        # 没有图片 → 文字生成
-        if not text_args:
-            await anan.finish("请在命令后输入要生成的文本，例如：夏目安安 你好世界")
+        # 返回使用说明
+        if not processed_args:
+            usage_image = draw_text_auto(
+                image_source=base_image_path,
+                top_left=config.text_box_topleft,
+                bottom_right=config.image_box_bottomright,
+                text=usage,
+                color=(0, 0, 0),
+                max_font_height=64,
+                font_path=fix_path(config.font_file),
+                image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+            )
+            b64 = base64.b64encode(usage_image).decode()
+            await anan.finish(MessageSegment.image(f"base64://{b64}"))
 
-        # 差分判断（自动支持带#或不带#）
-        diff = None
-        first_arg = text_args[0]
-        diff_keys = list(config.baseimage_mapping.keys())
-        normalized_keys = {k.strip("#"): k for k in diff_keys}
-
-        if len(text_args) >= 2:
-            if first_arg in diff_keys:
-                diff = first_arg
-                text_args.pop(0)
-            elif first_arg in normalized_keys:
-                diff = normalized_keys[first_arg]
-                text_args.pop(0)
-
-        # 拼接文本
-        text = " ".join(text_args).strip()
-
-        # 选择底图
-        base_image = config.baseimage_mapping.get(diff, config.baseimage_file)
-
-        # 绘制文字图
-        png_bytes = draw_text_auto(
-            image_source=base_image,
+        # 写入文字并发送
+        text = " ".join(processed_args)
+        text_image = draw_text_auto(
+            image_source=base_image_path,
             top_left=config.text_box_topleft,
             bottom_right=config.image_box_bottomright,
             text=text,
             color=(0, 0, 0),
             max_font_height=64,
-            font_path=config.font_file,
-            image_overlay=(config.base_overlay_file if config.use_base_overlay else None),
+            font_path=fix_path(config.font_file),
+            image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
         )
-
-        b64 = base64.b64encode(png_bytes).decode()
+        b64 = base64.b64encode(text_image).decode()
         await anan.finish(MessageSegment.image(f"base64://{b64}"))
 
+    except FinishedException:
+        return
     except Exception as e:
-        logger.exception("文本生成图片失败")
-        await anan.finish(f"生成失败: {e}")
+        logger.exception(f"生成图片失败: {str(e)}")
+        await anan.finish(f"生成失败: {str(e)[:50]}")
 
-
-async def handle_image(bot: Bot, event: Event, img_url: str, args: List[str]):
-    """处理图片合成功能（夏目安安 差分? [CQ:image...]）"""
+async def handle_image(img_url: str, base_image_path: str):
     try:
-        # 差分判断
-        diff = None
-        diff_keys = list(config.baseimage_mapping.keys())
-        normalized_keys = {k.strip("#"): k for k in diff_keys}
-
-        if args:
-            first_arg = args[0]
-            if first_arg in diff_keys:
-                diff = first_arg
-            elif first_arg in normalized_keys:
-                diff = normalized_keys[first_arg]
-
-        base_image = config.baseimage_mapping.get(diff, config.baseimage_file)
-
         # 下载图片
         async with httpx.AsyncClient() as client:
             resp = await client.get(img_url, timeout=20.0)
             resp.raise_for_status()
-            img_bytes = resp.content
 
-        pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGBA")
-
-        # 合成图片
-        png_bytes = paste_image_auto(
-            image_source=base_image,
-            top_left=config.text_box_topleft,
-            bottom_right=config.image_box_bottomright,
-            content_image=pil_img,
-            align="center",
-            valign="middle",
-            padding=12,
-            allow_upscale=True,
-            keep_alpha=True,
-            image_overlay=(config.base_overlay_file if config.use_base_overlay else None),
-        )
-
-        b64 = base64.b64encode(png_bytes).decode()
+        # 写入图片并发送
+        with Image.open(io.BytesIO(resp.content)).convert("RGBA") as pil_img:
+            combined_image = paste_image_auto(
+                image_source=base_image_path,
+                top_left=config.text_box_topleft,
+                bottom_right=config.image_box_bottomright,
+                content_image=pil_img,
+                align="center",
+                valign="middle",
+                padding=12,
+                allow_upscale=True,
+                keep_alpha=True,
+                image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+            )
+        b64 = base64.b64encode(combined_image).decode()
         await anan.finish(MessageSegment.image(f"base64://{b64}"))
 
+    except FinishedException:
+        return
     except Exception as e:
-        logger.exception("处理图片消息失败")
-        await anan.finish(f"生成图片失败: {e}")
+        logger.exception(f"生成图片失败: {str(e)}")
+        await anan.finish(f"生成图片失败: {str(e)[:50]}")

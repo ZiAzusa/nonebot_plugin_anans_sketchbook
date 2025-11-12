@@ -1,13 +1,19 @@
 # filename: image_fit_paste.py
 import os
 from io import BytesIO
-from typing import Literal, Tuple, Union
+
+# 兼容 Python 3.8~3.11
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+
+from typing import Tuple, Union
 
 from PIL import Image
 
 Align = Literal["left", "center", "right"]
 VAlign = Literal["top", "middle", "bottom"]
-
 
 def paste_image_auto(
     image_source: Union[str, Image.Image],
