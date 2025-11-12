@@ -21,8 +21,5 @@ image_box_bottomright: [398, 625]
 base_overlay_file: sources/BaseImages/base_overlay.png
 use_base_overlay: true
 
-# 生成图像的延迟时间（秒）
-delay: 0.1
-
 # 日志等级
 logging_level: INFO

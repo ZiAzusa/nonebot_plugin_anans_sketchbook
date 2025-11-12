@@ -20,6 +20,7 @@ from .utils.config import Config
 
 config = Config.load()
 logger = logging.getLogger(__name__)
+logger.setLevel(config.logging_level)
 PLUGIN_DIR = str(Path(__file__).parent) + "/"
 
 usage = f"""\

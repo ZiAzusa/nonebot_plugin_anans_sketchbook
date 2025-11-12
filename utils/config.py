@@ -25,7 +25,6 @@ class Config(BaseModel):
         "sources/BaseImages/base_overlay.png", description="底图置顶图层文件路径"
     )
     use_base_overlay: bool = Field(True, description="是否使用底图置顶图层")
-    delay: float = Field(0.1, description="生成图片操作延时（秒）")
     logging_level: str = Field("INFO", description="日志记录等级")
 
     @classmethod
