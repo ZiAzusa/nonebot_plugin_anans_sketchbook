@@ -21,9 +21,10 @@ pip install -r requirements.txt
 
 ## 使用
 
+```
 命令：anan 或 夏目安安
 功能：生成夏目安安的素描本聊天框
-支持的差分表情：{', '.join(config.baseimage_mapping.keys())}
+支持的差分表情：普通、开心、生气、无语、脸红、病娇
 
 用法：
 夏目安安 ?[可选差分] 文本/图片（优先图片）
@@ -33,6 +34,7 @@ pip install -r requirements.txt
 夏目安安 开心 吾辈开心
 夏目安安 [图片]
 夏目安安 开心 [图片]
+```
 
 <hr>
 
