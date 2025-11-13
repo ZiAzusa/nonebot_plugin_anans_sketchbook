@@ -12,7 +12,6 @@ import httpx
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment, Message
 from nonebot.params import CommandArg
-from nonebot.exception import FinishedException
 
 from .utils.image_fit_paste import paste_image_auto
 from .utils.text_fit_draw import draw_text_auto
@@ -21,7 +20,6 @@ from .utils.config import Config
 config = Config.load()
 logger = logging.getLogger(__name__)
 logger.setLevel(config.logging_level)
-PLUGIN_DIR = str(Path(__file__).parent) + "/"
 
 usage = f"""\
 命令：anan 或 夏目安安
@@ -38,17 +36,15 @@ anan = on_command("anan", aliases={"夏目安安"}, priority=5)
 
 # 切到插件目录
 def fix_path(filename: str) -> str:
-    return PLUGIN_DIR + filename
+    return str(Path(__file__).parent / filename)
 
 # 根据参数列表获取处理后的参数列表和底图路径
-def get_diff_info(args: List[str]) -> Tuple[Optional[str], List[str], str]:
+def get_diff_info(args: List[str]) -> Tuple[List[str], str]:
     if not args:
         # 无参数时使用默认底图
         default_image = config.baseimage_mapping.get(None, config.baseimage_file)
         return args, fix_path(default_image)
-    
-    diff_keys = config.baseimage_mapping.keys()
-    if args[0] in diff_keys:
+    if args[0] in config.baseimage_mapping.keys():
         # 匹配到差分，返回对应底图
         diff_image = config.baseimage_mapping[args[0]]
         return args[1:], fix_path(diff_image)
@@ -71,13 +67,11 @@ async def _(arg: Message = CommandArg()):
             elif seg.type == "image" and not image_url:  # 只取第一张图片
                 data = getattr(seg, "data", {}) or {}
                 image_url = data.get("url") or data.get("file") or data.get("image")
- 
+        # 获取差分信息
         processed_args, base_image_path = get_diff_info(text_args)
-
         if image_url:
             await handle_image(image_url, base_image_path)
             return
-
         # 写入文本并发送
         text_image = draw_text_auto(
             image_source=base_image_path,
@@ -91,13 +85,10 @@ async def _(arg: Message = CommandArg()):
             image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
         )
         b64 = base64.b64encode(text_image).decode()
-        await anan.finish(MessageSegment.image(f"base64://{b64}"))
-
-    except FinishedException:
-        return
     except Exception as e:
         logger.exception(f"生成图片失败: {str(e)}")
         await anan.finish(f"生成失败: {str(e)[:50]}")
+    await anan.finish(MessageSegment.image(f"base64://{b64}"))
 
 async def handle_image(img_url: str, base_image_path: str):
     try:
@@ -105,7 +96,6 @@ async def handle_image(img_url: str, base_image_path: str):
         async with httpx.AsyncClient() as client:
             resp = await client.get(img_url, timeout=20.0)
             resp.raise_for_status()
-
         # 写入图片并发送
         with Image.open(io.BytesIO(resp.content)).convert("RGBA") as pil_img:
             combined_image = paste_image_auto(
@@ -121,10 +111,7 @@ async def handle_image(img_url: str, base_image_path: str):
                 image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
             )
         b64 = base64.b64encode(combined_image).decode()
-        await anan.finish(MessageSegment.image(f"base64://{b64}"))
-
-    except FinishedException:
-        return
     except Exception as e:
         logger.exception(f"生成图片失败: {str(e)}")
         await anan.finish(f"生成图片失败: {str(e)[:50]}")
+    await anan.finish(MessageSegment.image(f"base64://{b64}"))
