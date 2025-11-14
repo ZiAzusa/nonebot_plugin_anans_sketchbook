@@ -192,12 +192,16 @@ if getattr(config, "convert_all_to_anan", False):
 
     _driver = get_driver()
     _patched_bots = set()
+    _patched = False
     # 在Bot实例连接时hook其send方法
     @_driver.on_bot_connect
     async def hook_anan_to_sender(bot):
+        #避免重复hook
+        global _patched_bots, _patched
         bot_id = bot.self_id
-        if bot_id in _patched_bots: return
+        if bot_id in _patched_bots or _patched: return
         _patched_bots.add(bot_id)
+        _patched = True
         _original_send = bot.send
         # 添加作画逻辑后的send方法
         async def anan_hooked_send(self, event=None, message=None, **kwargs):
