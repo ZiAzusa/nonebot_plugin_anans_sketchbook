@@ -192,28 +192,23 @@ if getattr(config, "convert_all_to_anan", False):
 
     _driver = get_driver()
     _patched_bots = set()
-    _patched = False
     # 在Bot实例连接时hook其send方法
     @_driver.on_bot_connect
     async def hook_anan_to_sender(bot):
         #避免重复hook
-        global _patched_bots, _patched
+        global _patched_bots
         bot_id = bot.self_id
-        if bot_id in _patched_bots or _patched: return
+        if bot_id in _patched_bots: return
         _patched_bots.add(bot_id)
-        _patched = True
         _original_send = bot.send
         # 添加作画逻辑后的send方法
         async def anan_hooked_send(self, event=None, message=None, **kwargs):
-            # 避免递归调用
-            if kwargs.pop("_anan_skip", None):
-                return await _original_send(event=event, message=message, **kwargs)
-            # 过滤非Onebot文本消息
-            if not isinstance(message, str) or not (raw := message.strip()):
-                return await _original_send(event=event, message=message, **kwargs)
-            # 过滤空消息和CQ码
-            if not raw or not re.search(r"\[CQ:[^]]+]", raw, re.IGNORECASE):
-                return await _original_send(event=event, message=message, **kwargs)
+            if (
+                kwargs.pop("_anan_skip", None) # 避免递归调用
+                or not isinstance(message, str) # 过滤非OneBot文本消息
+                or not (raw := message.strip()) # 过滤空消息
+                or re.search(r"\[CQ:[^]]+]", raw, re.IGNORECASE) # 过滤非文本消息（CQ码）
+            ): return await _original_send(event=event, message=message, **kwargs)
             try:
                 # 绘制文本
                 img_bytes = draw_text_auto(
@@ -231,6 +226,6 @@ if getattr(config, "convert_all_to_anan", False):
                 message = MessageSegment.image(f"base64://{b64}")
                 kwargs["_anan_skip"] = True # 避免递归调用
             except Exception as e:
-                logger.exception(f"安安自动转图失败: {e}")
+                logger.exception(f"替换为安安图片失败: {e}")
             return await _original_send(event=event, message=message, **kwargs)
         bot.send = MethodType(anan_hooked_send, bot)
