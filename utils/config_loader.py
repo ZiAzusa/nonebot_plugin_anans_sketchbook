@@ -7,12 +7,7 @@ class Config(BaseModel):
     font_file: str = Field("resources/font.ttf", description="使用字体的文件路径")
     baseimage_mapping: dict[str, str] = Field(
         {
-            "普通": "resources/BaseImages/base.png",
-            "开心": "resources/BaseImages/开心.png",
-            "生气": "resources/BaseImages/生气.png",
-            "无语": "resources/BaseImages/无语.png",
-            "脸红": "resources/BaseImages/脸红.png",
-            "病娇": "resources/BaseImages/病娇.png",
+            "普通": "resources/BaseImages/base.png"
         },
         description="将差分表情导入，默认底图base.png"
     )

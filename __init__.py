@@ -220,7 +220,7 @@ if getattr(config, "convert_all_to_anan", False):
                     bracket_color=(106, 90, 205),
                     max_font_height=64,
                     font_path=fix_path(config.font_file),
-                    image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+                    image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None
                 )
                 b64 = base64.b64encode(img_bytes).decode()
                 message = MessageSegment.image(f"base64://{b64}")

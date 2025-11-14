@@ -9,6 +9,12 @@ baseimage_mapping:
   "无语": "resources/BaseImages/无语.png"
   "脸红": "resources/BaseImages/脸红.png"
   "病娇": "resources/BaseImages/病娇.png"
+  "闭眼": "resources/BaseImages/闭眼.png"
+  "难受": "resources/BaseImages/难受.png"
+  "害怕": "resources/BaseImages/害怕.png"
+  "激动": "resources/BaseImages/激动.png"
+  "惊讶": "resources/BaseImages/惊讶.png"
+  "哭泣": "resources/BaseImages/哭泣.png"
 
 # 默认底图文件路径
 baseimage_file: resources/BaseImages/base.png
