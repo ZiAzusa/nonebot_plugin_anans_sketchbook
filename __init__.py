@@ -39,19 +39,33 @@ def fix_path(filename: str) -> str:
     return str(Path(__file__).parent / filename)
 
 # 根据参数列表获取处理后的参数列表和底图路径
-def get_diff_info(args: List[str]) -> Tuple[List[str], str]:
+def get_diff_info(args: List[str], has_image: bool) -> Tuple[List[str], str]:
+    # 无参数，使用默认底图
     if not args:
-        # 无参数时使用默认底图
         default_image = config.baseimage_mapping.get(None, config.baseimage_file)
         return args, fix_path(default_image)
+    # 只有一个参数
+    if len(args) == 1:
+        # 如果没有图片，不判断差分
+        if not has_image:
+            default_image = config.baseimage_mapping.get(None, config.baseimage_file)
+            return args, fix_path(default_image)
+        # 如果有图片，判断差分
+        else:
+            if args[0] in config.baseimage_mapping.keys():
+                diff_image = config.baseimage_mapping[args[0]]
+                return [], fix_path(diff_image)
+            else:
+                default_image = config.baseimage_mapping.get(None, config.baseimage_file)
+                return args, fix_path(default_image)
+    # 两个以上参数，判断差分
     if args[0] in config.baseimage_mapping.keys():
-        # 匹配到差分，返回对应底图
         diff_image = config.baseimage_mapping[args[0]]
         return args[1:], fix_path(diff_image)
-    else:
-        # 未匹配到差分，使用默认底图
-        default_image = config.baseimage_mapping.get(None, config.baseimage_file)
-        return args, fix_path(default_image)
+    # 其他情况
+    default_image = config.baseimage_mapping.get(None, config.baseimage_file)
+    return args, fix_path(default_image)
+
 
 # 处理存在图片的情况
 async def handle_image_content(img_url: str, base_image_path: str, text: str = "") -> bytes:
@@ -146,7 +160,7 @@ async def _(arg: Message = CommandArg()):
                 data = seg.data or {}
                 image_url = data.get("url") or data.get("file") or data.get("image")
         # 获取差分
-        processed_args, base_image_path = get_diff_info(text_args)
+        processed_args, base_image_path = get_diff_info(text_args, bool(image_url))
         text_content = " ".join(processed_args).strip()
         # 处理包含图片的情况
         if image_url:
