@@ -4,15 +4,19 @@ from io import BytesIO
 
 # 兼容 Python 3.8~3.11
 try:
-    from typing import TypeAlias, Literal
+    from typing import Literal
 except ImportError:
-    from typing_extensions import TypeAlias, Literal
+    from typing_extensions import Literal
 
 from typing import List, Optional, Tuple, Union
 
 from PIL import Image, ImageDraw, ImageFont
 
-RGBColor: TypeAlias = Tuple[int, int, int]
+RGBColor = Tuple[int, int, int]
+
+Align = Literal["left", "center", "right"]
+VAlign = Literal["top", "middle", "bottom"]
+
 
 def _load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
     """
