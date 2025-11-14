@@ -66,7 +66,6 @@ def get_diff_info(args: List[str], has_image: bool) -> Tuple[List[str], str]:
     default_image = config.baseimage_mapping.get(None, config.baseimage_file)
     return args, fix_path(default_image)
 
-
 # 处理存在图片的情况
 async def handle_image_content(img_url: str, base_image_path: str, text: str = "") -> bytes:
     # 下载图片

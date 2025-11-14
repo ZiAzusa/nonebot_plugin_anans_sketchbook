@@ -4,25 +4,25 @@ from pydantic import BaseModel, Field
 from typing import Union
 
 class Config(BaseModel):
-    font_file: str = Field("sources/font.ttf", description="使用字体的文件路径")
+    font_file: str = Field("resources/font.ttf", description="使用字体的文件路径")
     baseimage_mapping: dict[str, str] = Field(
         {
-            "普通": "sources/BaseImages/base.png",
-            "开心": "sources/BaseImages/开心.png",
-            "生气": "sources/BaseImages/生气.png",
-            "无语": "sources/BaseImages/无语.png",
-            "脸红": "sources/BaseImages/脸红.png",
-            "病娇": "sources/BaseImages/病娇.png",
+            "普通": "resources/BaseImages/base.png",
+            "开心": "resources/BaseImages/开心.png",
+            "生气": "resources/BaseImages/生气.png",
+            "无语": "resources/BaseImages/无语.png",
+            "脸红": "resources/BaseImages/脸红.png",
+            "病娇": "resources/BaseImages/病娇.png",
         },
         description="将差分表情导入，默认底图base.png",
     )
-    baseimage_file: str = Field("sources/BaseImages/base.png", description="默认底图文件路径")
+    baseimage_file: str = Field("resources/BaseImages/base.png", description="默认底图文件路径")
     text_box_topleft: tuple[int, int] = Field((119, 450), description="文本框左上角坐标 (x, y), 同时适用于图片框")
     image_box_bottomright: tuple[int, int] = Field(
         (119 + 279, 450 + 175), description="文本框右下角坐标 (x, y), 同时适用于图片框"
     )
     base_overlay_file: str = Field(
-        "sources/BaseImages/base_overlay.png", description="置顶图层的文件路径"
+        "resources/BaseImages/base_overlay.png", description="置顶图层的文件路径"
     )
     use_base_overlay: bool = Field(True, description="是否启用底图的置顶图层, 用于表现遮挡")
     logging_level: str = Field("INFO", description="日志记录等级, 可选值有 \"DEBUG\", \"INFO\", \"WARNING\", \"ERROR\", \"CRITICAL\"")
