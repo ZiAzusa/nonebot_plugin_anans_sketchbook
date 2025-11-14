@@ -14,9 +14,6 @@ from PIL import Image, ImageDraw, ImageFont
 
 RGBColor: TypeAlias = Tuple[int, int, int]
 
-Align = Literal["left", "center", "right"]
-VAlign = Literal["top", "middle", "bottom"]
-
 def _load_font(font_path: Optional[str], size: int) -> ImageFont.FreeTypeFont:
     """
     加载指定路径的字体文件，如果失败则加载默认字体。
@@ -34,7 +31,7 @@ def wrap_lines(
     """
     将文本按指定宽度拆分为多行。
     """
-    lines: list[str] = []
+    lines: List[str] = []
 
     for para in txt.splitlines() or [""]:
         has_space = " " in para
@@ -91,7 +88,7 @@ def parse_color_segments(
     解析字符串为带颜色信息的片段列表。
     中括号及其内部内容使用 bracket_color。
     """
-    segs: list[tuple[str, RGBColor]] = []
+    segs: List[Tuple[str, RGBColor]] = []
     buf = ""
     for ch in s:
         if ch == "[" or ch == "【":

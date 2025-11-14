@@ -1,10 +1,12 @@
 # 安安的素描本聊天框的NoneBot插件
 
+[![License](https://img.shields.io/github/license/ZiAzusa/nonebot_plugin_anans_sketchbook)](LICENSE)
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![Nonebot](https://img.shields.io/badge/nonebot-v2.0.0-rc3)](https://nonebot.dev/)
+[![Onebot](https://img.shields.io/badge/OneBot-v11-black?style=social&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAIVBMVEUAAAAAAAADAwMHBwceHh4UFBQNDQ0ZGRkoKCgvLy8iIiLWSdWYAAAAAXRSTlMAQObYZgAAAQVJREFUSMftlM0RgjAQhV+0ATYK6i1Xb+iMd0qgBEqgBEuwBOxU2QDKsjvojQPvkJ/ZL5sXkgWrFirK4MibYUdE3OR2nEpuKz1/q8CdNxNQgthZCXYVLjyoDQftaKuniHHWRnPh2GCUetR2/9HsMAXyUT4/3UHwtQT2AggSCGKeSAsFnxBIOuAggdh3AKTL7pDuCyABcMb0aQP7aM4AnAbc/wHwA5D2wDHTTe56gIIOUA/4YYV2e1sg713PXdZJAuncdZMAGkAukU9OAn40O849+0ornPwT93rphWF0mgAbauUrEOthlX8Zu7P5A6kZyKCJy75hhw1Mgr9RAUvX7A3csGqZegEdniCx30c3agAAAABJRU5ErkJggg==)](https://onebot.dev/)
+[![Onebot](https://img.shields.io/badge/OneBot-v12-black?style=social&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAIVBMVEUAAAAAAAADAwMHBwceHh4UFBQNDQ0ZGRkoKCgvLy8iIiLWSdWYAAAAAXRSTlMAQObYZgAAAQVJREFUSMftlM0RgjAQhV+0ATYK6i1Xb+iMd0qgBEqgBEuwBOxU2QDKsjvojQPvkJ/ZL5sXkgWrFirK4MibYUdE3OR2nEpuKz1/q8CdNxNQgthZCXYVLjyoDQftaKuniHHWRnPh2GCUetR2/9HsMAXyUT4/3UHwtQT2AggSCGKeSAsFnxBIOuAggdh3AKTL7pDuCyABcMb0aQP7aM4AnAbc/wHwA5D2wDHTTe56gIIOUA/4YYV2e1sg713PXdZJAuncdZMAGkAukU9OAn40O849+0ornPwT93rphWF0mgAbauUrEOthlX8Zu7P5A6kZyKCJy75hhw1Mgr9RAUvX7A3csGqZegEdniCx30c3agAAAABJRU5ErkJggg==)](https://onebot.dev/)
+
 本分支是 [MarkCup-Official/Anan-s-Sketchbook-Chat-Box](https://github.com/MarkCup-Official/Anan-s-Sketchbook-Chat-Box) 的Nonebot插件。
-
-## AI声明
-
-本项目90%的代码由AI生成
 
 ## 部署
 
@@ -20,6 +22,13 @@ pip install -r requirements.txt
 或者，将本项目所在路径直接引入到Nonebot的bot.py
 
 如需添加表情/修改字体，可以直接修改config.yaml
+
+## 配置参数
+
+主要可配置项包括：
+- 文本框和图片框的坐标范围
+- 字体文件路径
+- 底图和遮罩图路径
 
 ## 使用
 
@@ -39,39 +48,12 @@ pip install -r requirements.txt
 夏目安安 开心 [图片]
 ```
 
-<img src="https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook/blob/main/sources/example.jpg?raw=true" alt="使用例" style="width: 50%;">
+<img src="sources/example.jpg?raw=true" alt="使用例" style="width: 50%;">
+
+## 许可证
+
+本项目基于MIT协议传播，仅供个人学习交流使用，不拥有相关素材的版权。进行分发时应注意不违反素材版权与官方二次创造协定。
 
 <hr>
 
-**以下是原项目README**
-
-## AI声明
-
-本项目90%的代码由AI生成
-
-## 部署
-
-本项目只支持 windows ，如果你使用 macos 或者 linux 请参考 [这个分支](https://github.com/Sheyiyuan/Anan-s-Sketchbook-Chat-Box)
-
-现在字体文件和安安图片已经内置于项目中, 无需再额外置入DLC.
-
-其中`font.ttf`为字体文件, 可以自由修改成其他字体, 本项目不拥有字体版权, 仅做引用.
-
-底图存储于`BaseImages`目录中, 其中`base.png`为安安拿素描本的照片, `base_overlay.png`为透明底的安安袖子, 用于防止文字和图片覆盖在袖子上方. 如果分辨率不一样的安安图片, 需要修改`config.py`的 `TEXT_BOX_TOPLEFT` 和 `IMAGE_BOX_BOTTOMRIGHT`, 定义文本框的大小.
-
-依赖库安装: `pip install -r requirements.txt `
-
-## 使用
-
-使用文本编辑器打开`config.py`即可看到方便修改的参数, 可以设置热键, 图片路径, 字体路径, 指定的应用, 表情差分关键词等
-
-运行`main.py`即可开始监听回车, 在指定应用中按下回车会自动拦截按键, 生成图片后自动发送 (自动发送功能可以在`config.py`中关闭).
-
-特殊的, 在文本中输入\[\]或者【】, 被包裹的字符会变成紫色.
-
-输入文本框中的图片也可以被直接绘制在素描本上.
-
-输入`#普通#`, `#开心#`, `#生气#`, `#无语#`, `#脸红#`, `#病娇#`可以切换标签差分, 一次切换一直有效. 可以通过修改`BASEIMAGE_MAPPING`来增加更多查分
-
-如果发送失败等可以尝试适当增大`main.py`第10行的`DELAY`
-
+更多信息请查看原项目 [MarkCup-Official/Anan-s-Sketchbook-Chat-Box](https://github.com/MarkCup-Official/Anan-s-Sketchbook-Chat-Box)
