@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import base64
 import io
+import base64
 import logging
 from typing import Optional, List, Tuple
 from pathlib import Path
@@ -178,7 +178,55 @@ async def _(arg: Message = CommandArg()):
                 image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None
             )
         b64 = base64.b64encode(img_bytes).decode()
+        message = MessageSegment.image(f"base64://{b64}")
     except Exception as e:
         logger.exception(f"生成图片失败: {str(e)}")
-        await anan.finish(f"生成失败: {str(e)[:50]}")
-    await anan.finish(MessageSegment.image(f"base64://{b64}"))
+        message = f"生成失败: {str(e)[:50]}"
+    await anan.finish(message)
+
+# 如果启用了convert_all_to_anan，尝试在Bot实例连接时hook其send方法
+if getattr(config, "convert_all_to_anan", False):
+    import re
+    from types import MethodType
+    from nonebot import get_driver
+
+    _driver = get_driver()
+    _patched_bots = set()
+    # 在Bot实例连接时hook其send方法
+    @_driver.on_bot_connect
+    async def hook_anan_to_sender(bot):
+        bot_id = bot.self_id
+        if bot_id in _patched_bots: return
+        _patched_bots.add(bot_id)
+        _original_send = bot.send
+        # 添加作画逻辑后的send方法
+        async def anan_hooked_send(self, event=None, message=None, **kwargs):
+            # 避免递归调用
+            if kwargs.pop("_anan_skip", None):
+                return await _original_send(event=event, message=message, **kwargs)
+            # 过滤非Onebot文本消息
+            if not isinstance(message, str) or not (raw := message.strip()):
+                return await _original_send(event=event, message=message, **kwargs)
+            # 过滤空消息和CQ码
+            if not raw or not re.search(r"\[CQ:[^]]+]", raw, re.IGNORECASE):
+                return await _original_send(event=event, message=message, **kwargs)
+            try:
+                # 绘制文本
+                img_bytes = draw_text_auto(
+                    image_source=fix_path(config.baseimage_mapping.get(None, config.baseimage_file)),
+                    top_left=config.text_box_topleft,
+                    bottom_right=config.image_box_bottomright,
+                    text=raw,
+                    color=(0, 0, 0),
+                    bracket_color=(106, 90, 205),
+                    max_font_height=64,
+                    font_path=fix_path(config.font_file),
+                    image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+                )
+                b64 = base64.b64encode(img_bytes).decode()
+                message = MessageSegment.image(f"base64://{b64}")
+                kwargs["_anan_skip"] = True # 避免递归调用
+            except Exception as e:
+                logger.exception(f"安安自动转图失败: {e}")
+            return await _original_send(event=event, message=message, **kwargs)
+        bot.send = MethodType(anan_hooked_send, bot)
