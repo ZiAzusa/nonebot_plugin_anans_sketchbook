@@ -49,7 +49,7 @@ pip install -r requirements.txt
 夏目安安 开心 吾辈喜欢这个 [图片]
 ```
 
-<img src="sources/example.jpg?raw=true" alt="使用例" style="width: 50%;">
+<img src="resources/example.jpg?raw=true" alt="使用例" style="width: 50%;">
 
 ## 许可证
 
