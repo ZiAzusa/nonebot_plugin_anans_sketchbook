@@ -191,20 +191,16 @@ if getattr(config, "convert_all_to_anan", False):
     from nonebot import get_driver
 
     _driver = get_driver()
-    _patched_bots = set()
     # 在Bot实例连接时hook其send方法
     @_driver.on_bot_connect
     async def hook_anan_to_sender(bot):
         #避免重复hook
-        global _patched_bots
-        bot_id = bot.self_id
-        if bot_id in _patched_bots: return
-        _patched_bots.add(bot_id)
+        if getattr(bot.send, "_anan_patched", False): return
         _original_send = bot.send
         # 添加作画逻辑后的send方法
-        async def anan_hooked_send(self, event=None, message=None, **kwargs):
+        async def _anan_hooked_send(self, event=None, message=None, **kwargs):
             if (
-                kwargs.pop("_anan_skip", None) # 避免递归调用
+                kwargs.pop("skip_anan", None) # 避免递归调用，跳过带有skip_anan参数的请求
                 or not isinstance(message, str) # 过滤非OneBot文本消息
                 or not (raw := message.strip()) # 过滤空消息
                 or re.search(r"\[CQ:[^]]+]", raw, re.IGNORECASE) # 过滤非文本消息（CQ码）
@@ -224,8 +220,9 @@ if getattr(config, "convert_all_to_anan", False):
                 )
                 b64 = base64.b64encode(img_bytes).decode()
                 message = MessageSegment.image(f"base64://{b64}")
-                kwargs["_anan_skip"] = True # 避免递归调用
+                kwargs["skip_anan"] = True # 避免递归调用
             except Exception as e:
                 logger.exception(f"替换为安安图片失败: {e}")
             return await _original_send(event=event, message=message, **kwargs)
-        bot.send = MethodType(anan_hooked_send, bot)
+        setattr(_anan_hooked_send, "_anan_patched", True)
+        bot.send = MethodType(_anan_hooked_send, bot)
