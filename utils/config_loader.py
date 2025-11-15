@@ -5,6 +5,7 @@ from typing import Union
 
 class Config(BaseModel):
     font_file: str = Field("resources/font.ttf", description="使用字体的文件路径")
+    text_wrap_algorithm: str = Field("original", description="文本换行算法，可选值：\"original\"(原始算法), \"knuth_plass\"(改进的Knuth-Plass算法)")
     baseimage_mapping: dict[str, str] = Field(
         {
             "普通": "resources/BaseImages/base.png"

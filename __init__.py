@@ -26,7 +26,7 @@ usage = f"""\
 功能：生成夏目安安的素描本聊天框
 支持的差分表情：{', '.join(config.baseimage_mapping.keys())}
 
-用法：夏目安安 ?可选差分 ?可选文本 ?可选图片
+用法：夏目安安 ?差分 ?文本 ?图片
 
 例如：夏目安安 开心 这是吾辈在【说话】
 """
@@ -140,7 +140,8 @@ async def handle_image_content(img_url: str, base_image_path: str, text: str = "
             bracket_color=(106, 90, 205),
             max_font_height=text_font_height,
             font_path=fix_path(config.font_file),
-            image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None
+            image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+            wrap_algorithm=config.text_wrap_algorithm
         )
 
 # 注册命令处理函数
@@ -175,7 +176,8 @@ async def _(arg: Message = CommandArg()):
                 bracket_color=(106, 90, 205),
                 max_font_height=64,
                 font_path=fix_path(config.font_file),
-                image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None
+                image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+                wrap_algorithm=config.text_wrap_algorithm
             )
         b64 = base64.b64encode(img_bytes).decode()
         message = MessageSegment.image(f"base64://{b64}")
@@ -216,7 +218,8 @@ if getattr(config, "convert_all_to_anan", False):
                     bracket_color=(106, 90, 205),
                     max_font_height=64,
                     font_path=fix_path(config.font_file),
-                    image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None
+                    image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+                    wrap_algorithm=config.text_wrap_algorithm
                 )
                 b64 = base64.b64encode(img_bytes).decode()
                 message = MessageSegment.image(f"base64://{b64}")

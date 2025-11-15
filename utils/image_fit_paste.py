@@ -12,6 +12,9 @@ from typing import Tuple, Union
 
 from PIL import Image
 
+# 添加缓存
+from .resource_preloader import open_image
+
 Align = Literal["left", "center", "right"]
 VAlign = Literal["top", "middle", "bottom"]
 
@@ -49,14 +52,14 @@ def paste_image_auto(
     if isinstance(image_source, Image.Image):
         img = image_source.copy()
     else:
-        img = Image.open(image_source).convert("RGBA")
+        img = open_image(image_source).convert("RGBA")
 
     if image_overlay is not None:
         if isinstance(image_overlay, Image.Image):
             img_overlay = image_overlay.copy()
         else:
             img_overlay = (
-                Image.open(image_overlay).convert("RGBA")
+                open_image(image_overlay).convert("RGBA")
                 if os.path.isfile(image_overlay)
                 else None
             )

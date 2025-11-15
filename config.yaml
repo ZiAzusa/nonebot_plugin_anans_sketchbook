@@ -1,6 +1,9 @@
 # 使用字体的文件路径
 font_file: resources/allseto.ttf
 
+# 文本换行算法，可选值："original"(原始算法), "knuth_plass"(改进的Knuth-Plass算法)
+text_wrap_algorithm: "original"
+
 # 将差分表情导入，默认底图base.png
 baseimage_mapping:
   "普通": "resources/BaseImages/base.png"
