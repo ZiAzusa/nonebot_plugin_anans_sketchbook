@@ -207,7 +207,7 @@ if getattr(config, "convert_all_to_anan", False):
                 or not (raw := message.strip()) # 过滤空消息
                 or re.search(r"\[CQ:[^]]+]", raw, re.IGNORECASE) # 过滤非文本消息（CQ码）
                 or re.match(r"^\[\[_[^\n]*", raw) # 过滤带有特殊标记的消息
-                or len(raw) >= getattr(config, "max_len_of_long_text", 150) # 过滤过长的消息
+                or ((max_len := getattr(config, "max_len_of_long_text", 150)) >= 0 and len(raw) > max_len) # 过滤过长的消息
             ): return await _original_send(event=event, message=message, **kwargs)
             try:
                 # 绘制文本
