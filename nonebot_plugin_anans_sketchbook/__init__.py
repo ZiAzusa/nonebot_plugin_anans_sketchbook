@@ -12,6 +12,7 @@ import httpx
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment, Message
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 
 from .utils.image_fit_paste import paste_image_auto
 from .utils.text_fit_draw import draw_text_auto
@@ -31,8 +32,19 @@ usage = f"""\
 例如：夏目安安 开心 这是吾辈在【说话】
 """
 
+__plugin_meta__ = PluginMetadata(
+    name="安安的素描本聊天框",
+    description="生成夏目安安的素描本聊天框，支持文本和图片",
+    usage=usage,
+    config=Config,
+    extra={
+        "unique_name": "anans_sketchbook",
+        "author": "ZiAzusa",
+    },
+)
+
 # 命令触发器
-anan = on_command("anan", aliases={"夏目安安"}, priority=5)
+anan = on_command("anan", aliases={"夏目安安"}, priority=5, block=True)
 
 # 切到插件目录
 def fix_path(filename: str) -> str:

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nonebot-plugin-anans-sketchbook"
+version = "0.1.0"
+authors = [
+  { name = "ZiAzusa" }
+]
+description = "安安的素描本聊天框的NoneBot插件"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+keywords = ["nonebot", "nonebot2", "plugin"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook"
+"Repository" = "https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook"
+
+[project.optional-dependencies]
+dev = [
+  "nonebot2[dev]",
+]
+
+[tool.setuptools]
+packages = ["nonebot_plugin_anans_sketchbook"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+nonebot_plugin_anans_sketchbook = [
+  "config.yaml",
+  "resources/**/*",
+  "utils/*",
+]

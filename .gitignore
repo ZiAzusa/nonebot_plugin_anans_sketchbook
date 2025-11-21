@@ -1,3 +1,5 @@
 /.venv/
 /.vscode/
 /__pycache__/
+/nonebot_plugin_anans_sketchbook.egg-info/
+/dist/

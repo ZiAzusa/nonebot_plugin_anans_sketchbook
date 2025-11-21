@@ -1,4 +1,6 @@
 # filename: image_fit_paste.py
+from __future__ import annotations
+
 import os
 from io import BytesIO
 

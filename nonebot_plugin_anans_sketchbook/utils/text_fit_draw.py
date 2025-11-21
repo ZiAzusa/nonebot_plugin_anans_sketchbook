@@ -1,4 +1,6 @@
 # filename: text_fit_draw.py
+from __future__ import annotations
+
 import os
 from io import BytesIO
 
