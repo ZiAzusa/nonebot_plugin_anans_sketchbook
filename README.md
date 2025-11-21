@@ -26,7 +26,6 @@ nb-cli:
 ```shell
 nb plugin install nonebot-plugin-anans-sketchbook
 ```
-（未发布，请先使用pip）
 
 pip:
 ```shell

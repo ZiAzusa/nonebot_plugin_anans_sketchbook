@@ -36,6 +36,8 @@ __plugin_meta__ = PluginMetadata(
     name="安安的素描本聊天框",
     description="生成夏目安安的素描本聊天框，支持文本和图片",
     usage=usage,
+    type="application",
+    homepage="https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook",
     config=Config,
     extra={
         "unique_name": "anans_sketchbook",

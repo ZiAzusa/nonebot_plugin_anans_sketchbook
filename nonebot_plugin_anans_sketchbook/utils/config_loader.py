@@ -40,7 +40,7 @@ class Config(BaseModel):
         with path.open("r", encoding="utf-8") as f:
             yaml_config = yaml.safe_load(f) or {}
         try:
-            global_config = nonebot.get_plugin_config(cls).anan
+            global_config = nonebot.get_plugin_config(cls).anan.dict()
         except:
             global_config = nonebot.get_driver().config.anan
         data = {**yaml_config, **global_config}
