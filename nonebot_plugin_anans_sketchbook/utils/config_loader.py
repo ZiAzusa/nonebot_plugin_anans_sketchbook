@@ -21,7 +21,6 @@ class ScopedConfig(BaseModel):
     image_box_bottomright: tuple[int, int] = Field((119 + 279, 450 + 175), description="文本框右下角坐标 (x, y), 同时适用于图片框")
     base_overlay_file: str = Field("resources/BaseImages/base_overlay.png", description="置顶图层的文件路径")
     use_base_overlay: bool = Field(True, description="是否启用底图的置顶图层, 用于表现遮挡")
-    logging_level: str = Field("INFO", description="日志记录等级, 可选值有 \"DEBUG\", \"INFO\", \"WARNING\", \"ERROR\", \"CRITICAL\"")
     convert_all_to_anan: bool = Field(False, description="是否将Bot的所有文本消息替换为安安的素描本")
     max_len_of_long_text: int = Field(150, description="如果Bot的消息的长度大于这个值，原样发送消息（避免因字体过小无法看清）")
 

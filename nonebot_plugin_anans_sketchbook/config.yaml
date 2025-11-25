@@ -32,9 +32,6 @@ base_overlay_file: resources/BaseImages/base_overlay.png
 # 是否启用底图的置顶图层, 用于表现遮挡
 use_base_overlay: true
 
-# 日志记录等级, 可选值有 "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
-logging_level: INFO
-
 # 是否将Bot的所有文本消息替换为安安的素描本
 convert_all_to_anan: false
 #如果Bot的消息的长度大于这个值，原样发送消息（避免因字体过小无法看清）
