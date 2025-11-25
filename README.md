@@ -10,7 +10,6 @@
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
 [![Nonebot](https://img.shields.io/badge/nonebot-v2.3.0-rc0)](https://nonebot.dev/)
 [![Onebot](https://img.shields.io/badge/OneBot-v11-black?style=social&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAIVBMVEUAAAAAAAADAwMHBwceHh4UFBQNDQ0ZGRkoKCgvLy8iIiLWSdWYAAAAAXRSTlMAQObYZgAAAQVJREFUSMftlM0RgjAQhV+0ATYK6i1Xb+iMd0qgBEqgBEuwBOxU2QDKsjvojQPvkJ/ZL5sXkgWrFirK4MibYUdE3OR2nEpuKz1/q8CdNxNQgthZCXYVLjyoDQftaKuniHHWRnPh2GCUetR2/9HsMAXyUT4/3UHwtQT2AggSCGKeSAsFnxBIOuAggdh3AKTL7pDuCyABcMb0aQP7aM4AnAbc/wHwA5D2wDHTTe56gIIOUA/4YYV2e1sg713PXdZJAuncdZMAGkAukU9OAn40O849+0ornPwT93rphWF0mgAbauUrEOthlX8Zu7P5A6kZyKCJy75hhw1Mgr9RAUvX7A3csGqZegEdniCx30c3agAAAABJRU5ErkJggg==)](https://onebot.dev/)
-[![Onebot](https://img.shields.io/badge/OneBot-v12-black?style=social&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAIVBMVEUAAAAAAAADAwMHBwceHh4UFBQNDQ0ZGRkoKCgvLy8iIiLWSdWYAAAAAXRSTlMAQObYZgAAAQVJREFUSMftlM0RgjAQhV+0ATYK6i1Xb+iMd0qgBEqgBEuwBOxU2QDKsjvojQPvkJ/ZL5sXkgWrFirK4MibYUdE3OR2nEpuKz1/q8CdNxNQgthZCXYVLjyoDQftaKuniHHWRnPh2GCUetR2/9HsMAXyUT4/3UHwtQT2AggSCGKeSAsFnxBIOuAggdh3AKTL7pDuCyABcMb0aQP7aM4AnAbc/wHwA5D2wDHTTe56gIIOUA/4YYV2e1sg713PXdZJAuncdZMAGkAukU9OAn40O849+0ornPwT93rphWF0mgAbauUrEOthlX8Zu7P5A6kZyKCJy75hhw1Mgr9RAUvX7A3csGqZegEdniCx30c3agAAAABJRU5ErkJggg==)](https://onebot.dev/)
 
 </p>
 
@@ -41,7 +40,7 @@ pip install nonebot-plugin-anans-sketchbook
 cd 插件目录
 git clone https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook.git
 cd nonebot_plugin_anans_sketchbook
-mv nonebot_plugin_anans_sketchbook/* . && rm -rf nonebot_plugin_anans_sketchbook
+
 pip install -r requirements.txt
 ```
 
@@ -53,7 +52,7 @@ pip install -r requirements.txt
 - 底图和遮罩图路径
 - 是否将Bot的所有文本消息替换为安安的素描本
 
-如果通过nb-cli或pip安装，可以使用Nonebot的全局配置文件`.env.*`进行配置（也可以不进行配置，插件内置了默认配置文件），具体参考 [NoneBot配置](https://nonebot.dev/docs/appendices/config)
+如果通过nb-cli或pip安装，可以使用Nonebot的全局配置文件`.env.*`进行配置（也可以不进行配置，插件内置了默认配置文件），具体参考 [NoneBot配置](https://nonebot.dev/docs/appendices/config)mv nonebot_plugin_anans_sketchbook/* . && rm -rf nonebot_plugin_anans_sketchbook
 
 ### 具体配置项如下
 

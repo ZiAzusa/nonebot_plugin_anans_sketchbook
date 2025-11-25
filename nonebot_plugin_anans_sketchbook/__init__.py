@@ -37,7 +37,7 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook",
     config=Config,
-    supported_adapters={"~onebot.v11", "~onebot.v12"},
+    supported_adapters={"~onebot.v11"},
     extra={
         "unique_name": "anans_sketchbook",
         "author": "ZiAzusa",
