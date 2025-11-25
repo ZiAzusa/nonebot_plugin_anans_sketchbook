@@ -8,7 +8,7 @@
 
 [![License](https://img.shields.io/github/license/ZiAzusa/nonebot_plugin_anans_sketchbook)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
-[![Nonebot](https://img.shields.io/badge/nonebot-v2.0.0-rc3)](https://nonebot.dev/)
+[![Nonebot](https://img.shields.io/badge/nonebot-v2.3.0-rc0)](https://nonebot.dev/)
 [![Onebot](https://img.shields.io/badge/OneBot-v11-black?style=social&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAIVBMVEUAAAAAAAADAwMHBwceHh4UFBQNDQ0ZGRkoKCgvLy8iIiLWSdWYAAAAAXRSTlMAQObYZgAAAQVJREFUSMftlM0RgjAQhV+0ATYK6i1Xb+iMd0qgBEqgBEuwBOxU2QDKsjvojQPvkJ/ZL5sXkgWrFirK4MibYUdE3OR2nEpuKz1/q8CdNxNQgthZCXYVLjyoDQftaKuniHHWRnPh2GCUetR2/9HsMAXyUT4/3UHwtQT2AggSCGKeSAsFnxBIOuAggdh3AKTL7pDuCyABcMb0aQP7aM4AnAbc/wHwA5D2wDHTTe56gIIOUA/4YYV2e1sg713PXdZJAuncdZMAGkAukU9OAn40O849+0ornPwT93rphWF0mgAbauUrEOthlX8Zu7P5A6kZyKCJy75hhw1Mgr9RAUvX7A3csGqZegEdniCx30c3agAAAABJRU5ErkJggg==)](https://onebot.dev/)
 [![Onebot](https://img.shields.io/badge/OneBot-v12-black?style=social&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABABAMAAABYR2ztAAAAIVBMVEUAAAAAAAADAwMHBwceHh4UFBQNDQ0ZGRkoKCgvLy8iIiLWSdWYAAAAAXRSTlMAQObYZgAAAQVJREFUSMftlM0RgjAQhV+0ATYK6i1Xb+iMd0qgBEqgBEuwBOxU2QDKsjvojQPvkJ/ZL5sXkgWrFirK4MibYUdE3OR2nEpuKz1/q8CdNxNQgthZCXYVLjyoDQftaKuniHHWRnPh2GCUetR2/9HsMAXyUT4/3UHwtQT2AggSCGKeSAsFnxBIOuAggdh3AKTL7pDuCyABcMb0aQP7aM4AnAbc/wHwA5D2wDHTTe56gIIOUA/4YYV2e1sg713PXdZJAuncdZMAGkAukU9OAn40O849+0ornPwT93rphWF0mgAbauUrEOthlX8Zu7P5A6kZyKCJy75hhw1Mgr9RAUvX7A3csGqZegEdniCx30c3agAAAABJRU5ErkJggg==)](https://onebot.dev/)
 
@@ -18,15 +18,18 @@
 
 本分支是 [MarkCup-Official/Anan-s-Sketchbook-Chat-Box](https://github.com/MarkCup-Official/Anan-s-Sketchbook-Chat-Box) 的Nonebot插件，支持绘制文本/图片到安安的素描本上，也支持将Bot的所有文本消息替换为使用安安的素描本发送
 
-**这是兼容nonebot2.0.0-2.3.0的版本**
-
 ## 部署
 
-### 方案1 使用pip安装
+### 方案1 使用nb-cli或pip安装
+
+nb-cli:
+```shell
+nb plugin install nonebot-plugin-anans-sketchbook
+```
 
 pip:
 ```shell
-pip install nonebot-plugin-anans-sketchbook==0.3.0rc0
+pip install nonebot-plugin-anans-sketchbook
 ```
 
 而后按照 [NoneBot加载插件](https://nonebot.dev/docs/tutorial/create-plugin#%E5%8A%A0%E8%BD%BD%E6%8F%92%E4%BB%B6) 加载插件
@@ -38,7 +41,6 @@ pip install nonebot-plugin-anans-sketchbook==0.3.0rc0
 cd 插件目录
 git clone https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook.git
 cd nonebot_plugin_anans_sketchbook
-git checkout 0.3.0rc0
 mv nonebot_plugin_anans_sketchbook/* . && rm -rf nonebot_plugin_anans_sketchbook
 pip install -r requirements.txt
 ```
