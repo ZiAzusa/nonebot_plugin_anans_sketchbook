@@ -199,7 +199,7 @@ async def _(arg: Message = CommandArg()):
         msg = f"生成失败: {str(e)[:50]}"
     await anan.finish(msg)
 
-# 如果启用了convert_all_to_anan，尝试在Bot实例连接时hook其send方法
+# 如果启用了convert_all_to_anan，尝试捕获其API calling
 if getattr(config, "convert_all_to_anan", False):
     import re
     from nonebot.exception import MockApiException
