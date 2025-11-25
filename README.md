@@ -18,18 +18,15 @@
 
 本分支是 [MarkCup-Official/Anan-s-Sketchbook-Chat-Box](https://github.com/MarkCup-Official/Anan-s-Sketchbook-Chat-Box) 的Nonebot插件，支持绘制文本/图片到安安的素描本上，也支持将Bot的所有文本消息替换为使用安安的素描本发送
 
+**这是兼容nonebot2.0.0-2.3.0的版本**
+
 ## 部署
 
-### 方案1 使用nb-cli或pip安装
-
-nb-cli:
-```shell
-nb plugin install nonebot-plugin-anans-sketchbook
-```
+### 方案1 使用pip安装
 
 pip:
 ```shell
-pip install nonebot-plugin-anans-sketchbook
+pip install nonebot-plugin-anans-sketchbook==0.3.0rc0
 ```
 
 而后按照 [NoneBot加载插件](https://nonebot.dev/docs/tutorial/create-plugin#%E5%8A%A0%E8%BD%BD%E6%8F%92%E4%BB%B6) 加载插件
@@ -41,6 +38,7 @@ pip install nonebot-plugin-anans-sketchbook
 cd 插件目录
 git clone https://github.com/ZiAzusa/nonebot_plugin_anans_sketchbook.git
 cd nonebot_plugin_anans_sketchbook
+git checkout 0.3.0rc0
 mv nonebot_plugin_anans_sketchbook/* . && rm -rf nonebot_plugin_anans_sketchbook
 pip install -r requirements.txt
 ```
@@ -125,7 +123,7 @@ pip install -r requirements.txt
 
 - 类型：`bool`
 - 默认：`False`
-- 说明：是否将Bot的所有文本消息替换为安安的素描本（WARN：这是一个可能存在诸多Bug的实验性功能，开启该功能有损坏消息发送逻辑的风险，请谨慎启用）
+- 说明：是否将Bot的所有文本消息替换为安安的素描本
 
 #### `ANAN__MAX_LEN_OF_LONG_TEXT`
 

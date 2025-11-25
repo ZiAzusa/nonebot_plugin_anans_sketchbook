@@ -13,6 +13,7 @@ except ImportError:
 from typing import Tuple, Union
 
 from PIL import Image
+from nonebot.log import logger
 
 # 添加缓存
 from .resource_preloader import open_image
@@ -122,7 +123,7 @@ def paste_image_auto(
     if image_overlay is not None and img_overlay is not None:
         img.paste(img_overlay, (0, 0), img_overlay)
     elif image_overlay is not None and img_overlay is None:
-        print("Warning: overlay image is not exist.")
+        logger.warning("Warning: overlay image is not exist.")
 
     # 输出 PNG bytes
     buf = BytesIO()

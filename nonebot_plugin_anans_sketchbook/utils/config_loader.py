@@ -3,6 +3,7 @@ from __future__ import annotations
 import yaml
 import nonebot
 from pathlib import Path
+from nonebot.log import logger
 from pydantic import BaseModel, Field
 from typing import Union
 
@@ -21,7 +22,7 @@ class ScopedConfig(BaseModel):
     base_overlay_file: str = Field("resources/BaseImages/base_overlay.png", description="置顶图层的文件路径")
     use_base_overlay: bool = Field(True, description="是否启用底图的置顶图层, 用于表现遮挡")
     logging_level: str = Field("INFO", description="日志记录等级, 可选值有 \"DEBUG\", \"INFO\", \"WARNING\", \"ERROR\", \"CRITICAL\"")
-    convert_all_to_anan: bool = Field(False, description="是否将Bot的所有文本消息替换为安安的素描本（WARN：这是一个可能存在诸多Bug的实验性功能，开启该功能有损坏消息发送逻辑的风险，请谨慎启用）")
+    convert_all_to_anan: bool = Field(False, description="是否将Bot的所有文本消息替换为安安的素描本")
     max_len_of_long_text: int = Field(150, description="如果Bot的消息的长度大于这个值，原样发送消息（避免因字体过小无法看清）")
 
 class Config(BaseModel):
@@ -31,7 +32,7 @@ class Config(BaseModel):
     def load(cls, path: Union[str, Path] = "config.yaml") -> "ScopedConfig":
         path = Path(__file__).parent.parent / path
         if not path.exists():
-            print(f"[Config] 未找到 {path}，正在创建默认配置...")
+            logger.warning(f"Warning: 未找到 {path}，正在创建默认配置...")
             default_cfg = ScopedConfig()
             with path.open("w", encoding="utf-8") as f:
                 yaml.safe_dump(default_cfg.dict(), f, allow_unicode=True, sort_keys=False)

@@ -13,6 +13,7 @@ except ImportError:
 from typing import List, Optional, Tuple, Union
 
 from PIL import Image, ImageDraw, ImageFont
+from nonebot.log import logger
 
 # 添加缓存
 from .resource_preloader import open_image, open_font
@@ -427,7 +428,7 @@ def draw_text_auto(
     if image_overlay is not None and img_overlay is not None:
         img.paste(img_overlay, (0, 0), img_overlay)
     elif image_overlay is not None and img_overlay is None:
-        print("Warning: overlay image is not exist.")
+        logger.warning("Warning: overlay image is not exist.")
 
     # --- 5. 输出 PNG ---
     buf = BytesIO()
