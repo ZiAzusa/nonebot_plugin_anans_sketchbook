@@ -208,7 +208,7 @@ if getattr(config, "convert_all_to_anan", False):
     async def _handle_api_with_anan(bot: Bot, api: str, data: Dict[str, Any]):
         if api not in ["send_msg", "send_group_msg", "send_private_msg"]: return # 仅处理消息发送API
         msg = data.get("message", "")
-        if isinstance(msg, Message) and msg.only("text"): raw = msg.extract_plain_text().strip()
+        if isinstance(msg, Message) and all(segment.is_text() for segment in msg): raw = msg.extract_plain_text().strip()
         elif isinstance(msg, str): raw = msg.strip()
         else: return # 消息预处理，提取文本内容
         if (
