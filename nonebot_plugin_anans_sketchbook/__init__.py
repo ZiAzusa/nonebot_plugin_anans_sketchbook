@@ -219,20 +219,23 @@ if getattr(config, "convert_all_to_anan", False):
             or ((max_len := getattr(config, "max_len_of_long_text", 150)) >= 0 and len(raw) > max_len) # 过滤过长的消息
         ): return
         # 绘制文本
-        img_bytes = draw_text_auto(
-            image_source=fix_path(config.baseimage_mapping.get(None, config.baseimage_file)),
-            top_left=config.text_box_topleft,
-            bottom_right=config.image_box_bottomright,
-            text=raw,
-            color=(0, 0, 0),
-            bracket_color=(106, 90, 205),
-            max_font_height=64,
-            font_path=fix_path(config.font_file),
-            image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
-            wrap_algorithm=config.text_wrap_algorithm
-        )
-        b64 = base64.b64encode(img_bytes).decode()
-        data["message"] = MessageSegment.image(f"base64://{b64}")
+        try:
+            img_bytes = draw_text_auto(
+                image_source=fix_path(config.baseimage_mapping.get(None, config.baseimage_file)),
+                top_left=config.text_box_topleft,
+                bottom_right=config.image_box_bottomright,
+                text=raw,
+                color=(0, 0, 0),
+                bracket_color=(106, 90, 205),
+                max_font_height=64,
+                font_path=fix_path(config.font_file),
+                image_overlay=fix_path(config.base_overlay_file) if config.use_base_overlay else None,
+                wrap_algorithm=config.text_wrap_algorithm
+            )
+            b64 = base64.b64encode(img_bytes).decode()
+            data["message"] = MessageSegment.image(f"base64://{b64}")
+        except Exception as e:
+            logger.error(f"Error: 生成图片失败: {str(e)}")
         data["skip_anan"] = True # 避免递归调用
         result = await bot.call_api(api, **data)
         raise MockApiException(result=result)
